@@ -1,13 +1,18 @@
-<div style="
-    width: 100vw;
-    min-height: 100vh;
-    margin-left: calc(50% - 50vw);
-    margin-right: calc(50% - 50vw);
-    margin-top: -180px;
-    margin-bottom: -180px;
-    position: relative;
-    z-index: 50;
-">
+<div
+    class="penakas-login-page"
+    style="
+        width: 100vw;
+        min-height: 100vh;
+        margin-left: calc(50% - 50vw);
+        margin-right: calc(50% - 50vw);
+        margin-top: -180px;
+        margin-bottom: -180px;
+        position: relative;
+        z-index: 50;
+        color-scheme: light;
+        font-family: 'Poppins', ui-sans-serif, system-ui, sans-serif;
+    "
+>
     @php
         $setting = \App\Models\AppSetting::getSetting();
 
@@ -25,8 +30,8 @@
             justify-content: center;
             padding: 80px 32px;
             background:
-                radial-gradient(circle at top left, rgba(var(--primary-500), .16), transparent 32%),
-                radial-gradient(circle at bottom right, rgba(var(--primary-600), .10), transparent 30%),
+                radial-gradient(circle at top left, rgba(168, 85, 247, .16), transparent 32%),
+                radial-gradient(circle at bottom right, rgba(126, 34, 206, .10), transparent 30%),
                 #f8fafc;
         "
     >
@@ -64,7 +69,7 @@
                         bottom: 28px;
                         padding: 20px;
                         border-radius: 18px;
-                        background: rgba(15, 23, 42, 0.05);
+                        background: rgba(15, 23, 42, .55);
                         backdrop-filter: blur(10px);
                         color: #ffffff;
                     "
@@ -74,7 +79,7 @@
                             font-size: 22px;
                             font-weight: 900;
                             margin-bottom: 6px;
-                            color: rgb(var(--primary-300));
+                            color: #ffffff;
                         "
                     >
                         {{ $appName }}
@@ -93,6 +98,8 @@
                     display: flex;
                     flex-direction: column;
                     justify-content: center;
+                    background: #ffffff;
+                    color: #0f172a;
                 "
             >
                 <div style="margin-bottom: 30px;">
@@ -102,7 +109,7 @@
                                 font-size: 36px;
                                 font-weight: 900;
                                 line-height: 1;
-                                color: rgb(var(--primary-600));
+                                color: #7e22ce;
                                 letter-spacing: -0.045em;
                             "
                         >
@@ -114,7 +121,7 @@
                         </div>
                     </div>
 
-                    <h1 style="font-size: 34px; font-weight: 900; margin: 0 0 10px; line-height: 1.15;">
+                    <h1 style="font-size: 34px; font-weight: 900; margin: 0 0 10px; line-height: 1.15; color: #0f172a;">
                         Selamat Datang
                     </h1>
 
@@ -167,7 +174,7 @@
                             <span wire:loading wire:target="authenticate">
                                 Memproses...
                             </span>
-                        </button>       
+                        </button>
                     </div>
                 </form>
 
@@ -181,6 +188,46 @@
     </div>
 
     <style>
+        .penakas-login-page,
+        .penakas-login-page * {
+            color-scheme: light !important;
+        }
+
+        .penakas-login-page label,
+        .penakas-login-page .fi-fo-field-wrp-label span,
+        .penakas-login-page .fi-fo-field-wrp-label {
+            color: #0f172a !important;
+        }
+
+        .penakas-login-page input {
+            background: #ffffff !important;
+            color: #0f172a !important;
+            border-color: #d1d5db !important;
+        }
+
+        .penakas-login-page input:focus {
+            border-color: #a855f7 !important;
+            box-shadow: 0 0 0 1px #a855f7 !important;
+        }
+
+        .penakas-login-page .fi-checkbox-input {
+            background-color: #ffffff !important;
+            border-color: #d1d5db !important;
+        }
+
+        .penakas-login-page .fi-input-wrp {
+            background: #ffffff !important;
+        }
+
+        .penakas-login-page .fi-input-wrp,
+        .penakas-login-page .fi-input-wrp * {
+            color: #0f172a !important;
+        }
+
+        .penakas-login-page .fi-input-wrp-suffix {
+            background: #f8fafc !important;
+        }
+
         @keyframes penakas-spin {
             from {
                 transform: rotate(0deg);

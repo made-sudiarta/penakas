@@ -21,6 +21,8 @@ use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use App\Models\AppSetting;
 use App\Filament\Pages\Auth\Login;
+use Filament\Support\Facades\FilamentAsset;
+use Filament\Support\Assets\Css;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -37,6 +39,7 @@ class AdminPanelProvider extends PanelProvider
             ->brandLogo($setting->logo_url)
             ->brandLogoHeight('2.5rem')
             ->sidebarCollapsibleOnDesktop()
+            ->font('Poppins')
             ->colors([
                 'primary' => Color::Purple,
             ])
@@ -73,5 +76,11 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ]);
+    }
+    public function boot(): void
+    {
+        FilamentAsset::register([
+            Css::make('penakas-filament', asset('css/penakas-filament.css')),
+        ]);
     }
 }
