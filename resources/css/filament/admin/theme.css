@@ -1,0 +1,16 @@
+@import '../../../../vendor/filament/filament/resources/css/theme.css';
+
+@media (max-width: 1024px) {
+    .fi-form-actions,
+    .fi-form-actions .fi-ac,
+    .fi-form-actions .fi-ac-action,
+    .fi-form-actions .fi-btn {
+        width: 100%;
+    }
+
+    .fi-form-actions .fi-ac {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+}
