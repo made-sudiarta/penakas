@@ -42,6 +42,7 @@ class ProfilAplikasi extends Page implements HasSchemas
             'phone' => $setting->phone,
             'address' => $setting->address,
             'logo' => $setting->logo,
+            'description' => $setting->description, 
         ]);
     }
 
@@ -63,6 +64,12 @@ class ProfilAplikasi extends Page implements HasSchemas
                             ->required()
                             ->maxLength(255)
                             ->default('PenaKas'),
+
+                        Textarea::make('description')
+                            ->label('Keterangan Sistem')
+                            ->placeholder('Jelaskan tentang aplikasi ini...')
+                            ->rows(4)
+                            ->columnSpanFull(),
 
                         TextInput::make('owner_name')
                             ->label('Nama Pemilik / Pengelola')

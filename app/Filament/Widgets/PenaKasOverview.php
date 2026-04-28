@@ -21,7 +21,7 @@ class PenaKasOverview extends StatsOverviewWidget
     protected function getColumns(): int|array
     {
         return [
-            'default' => 2,
+            'default' => 1,
             'md' => 3,
             'xl' => 3,
         ];

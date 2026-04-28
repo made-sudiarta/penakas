@@ -18,6 +18,8 @@
 
         $appName = $setting->app_name ?? 'PenaKas';
 
+        $description = $setting->description ?? 'Kelola keuangan kos dan banjar dalam satu aplikasi.'; // 👈 tambahkan ini
+
         $loginImage = asset('images/login-penakas.jpg');
     @endphp
 
@@ -86,7 +88,7 @@
                     </div>
 
                     <div style="font-size: 14px; line-height: 1.6; color: rgba(255,255,255,.86);">
-                        Catat pemasukan, pengeluaran, pembayaran kos, dan dana banjar dalam satu aplikasi.
+                        Catat Pemasukan, Pengeluaran, Pembayaran Kos, dan Dana Banjar dalam satu aplikasi.
                     </div>
                 </div>
             </div>
@@ -102,7 +104,7 @@
                     color: #0f172a;
                 "
             >
-                <div style="margin-bottom: 30px;">
+                <div style="margin-bottom: 0px;">
                     <div style="margin-bottom: 26px;">
                         <div
                             style="
@@ -116,18 +118,18 @@
                             {{ $appName }}
                         </div>
 
-                        <div style="font-size: 14px; color: #64748b; margin-top: 10px; line-height: 1.5;">
-                            Sistem kas rumah kos dan banjar
+                        <div style="font-size: 14px; color: #64748b; line-height: 1.5;">
+                            {{ $description }}
                         </div>
                     </div>
 
-                    <h1 style="font-size: 34px; font-weight: 900; margin: 0 0 10px; line-height: 1.15; color: #0f172a;">
+                    <!-- <h1 style="font-size: 34px; font-weight: 900; margin: 0 0 10px; line-height: 1.15; color: #0f172a;">
                         Selamat Datang
                     </h1>
 
                     <p style="font-size: 15px; color: #64748b; margin: 0; line-height: 1.6;">
                         Masuk untuk melanjutkan ke dashboard {{ $appName }}.
-                    </p>
+                    </p> -->
                 </div>
 
                 <form wire:submit="authenticate">

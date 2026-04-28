@@ -13,6 +13,7 @@ class AppSetting extends Model
         'phone',
         'address',
         'logo',
+        'description',
     ];
 
     public static function getSetting(): self

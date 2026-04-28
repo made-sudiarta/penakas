@@ -16,7 +16,7 @@ class TagihanKostStats extends StatsOverviewWidget
     protected function getColumns(): int|array
     {
         return [
-            'default' => 3,
+            'default' => 1,
             'md' => 3,
         ];
     }

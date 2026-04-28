@@ -24,6 +24,7 @@ use App\Filament\Pages\Auth\Login;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Assets\Css;
 
+
 class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
@@ -70,7 +71,9 @@ class AdminPanelProvider extends PanelProvider
                 DispatchServingFilamentEvent::class,
             ])
             ->plugins([
-                FilamentShieldPlugin::make(),
+                FilamentShieldPlugin::make()
+                ->navigationGroup('Pengaturan')
+                ->navigationSort(1),
             ])
             // ->viteTheme('resources/css/filament/admin/theme.css')
             ->authMiddleware([

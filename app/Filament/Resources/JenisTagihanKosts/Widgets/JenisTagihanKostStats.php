@@ -16,7 +16,7 @@ class JenisTagihanKostStats extends StatsOverviewWidget
     protected function getColumns(): int|array
     {
         return [
-            'default' => 3,
+            'default' => 2,
             'md' => 3,
         ];
     }

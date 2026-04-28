@@ -21,6 +21,6 @@ class Login extends BaseLogin
 
     public function getSubheading(): ?string
     {
-        return 'Kelola kas rumah kos dan banjar dengan mudah.';
+        return (AppSetting::getSetting()->description ?? 'Kelola kas rumah kos dan banjar dengan mudah.');
     }
 }
