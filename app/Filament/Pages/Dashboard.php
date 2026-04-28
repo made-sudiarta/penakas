@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Filament\Widgets\PenaKasOverview;
+use App\Models\AppSetting;
 use Filament\Pages\Dashboard as BaseDashboard;
 
 class Dashboard extends BaseDashboard
