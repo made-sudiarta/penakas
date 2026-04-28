@@ -9,7 +9,7 @@ class Dashboard extends BaseDashboard
 {
     public function getTitle(): string
     {
-        return 'Dashboard PenaKas';
+        return 'Dashboard - ' . (AppSetting::getSetting()->app_name);
     }
 
     public function getWidgets(): array

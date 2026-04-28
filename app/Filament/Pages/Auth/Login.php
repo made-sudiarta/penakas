@@ -11,7 +11,7 @@ class Login extends BaseLogin
 
     public function getTitle(): string
     {
-        return 'Login - ' . (AppSetting::getSetting()->app_name ?? 'PenaKas');
+        return 'Sign in - ' . (AppSetting::getSetting()->app_name);
     }
 
     public function getHeading(): string
