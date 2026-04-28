@@ -16,7 +16,7 @@
                         align-items: center;
                         justify-content: center;
                         border-radius: 8px;
-                        background: #f59e0b;
+                        background: #6b46c1;
                         color: white;
                         font-weight: 600;
                         padding: 10px 18px;
