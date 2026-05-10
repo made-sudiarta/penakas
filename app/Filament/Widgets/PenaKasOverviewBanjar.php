@@ -10,11 +10,11 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
-class PenaKasOverview extends StatsOverviewWidget
+class PenaKasOverviewBanjar extends StatsOverviewWidget
 {
-    protected ?string $heading = 'Dana Banjar Adat Minggir';
+    // protected ?string $heading = 'Ringkasan PenaKas';
 
-    protected ?string $description = 'Rincian Dana Banjar dan Prajuru';
+    protected ?string $description = 'Rincian Pembagian Tempat Dana Banjar';
 
     protected static ?int $sort = 1;
 
@@ -22,8 +22,8 @@ class PenaKasOverview extends StatsOverviewWidget
     {
         return [
             'default' => 1,
-            'md' => 2,
-            'xl' => 2,
+            'md' => 3,
+            'xl' => 3,
         ];
     }
 
@@ -201,23 +201,33 @@ class PenaKasOverview extends StatsOverviewWidget
         return [
             // Existing Stat widgets...
 
-            Stat::make('Saldo Kas Banjar', 'Rp ' . number_format($saldoBanjar, 0, ',', '.'))
-                ->description('Saldo total Banjar')
-                ->descriptionIcon(Heroicon::OutlinedScale)
+            Stat::make('Saldo Deposito LPD', 'Rp ' . number_format($saldoDepositoLPD, 0, ',', '.'))
+                ->description('Saldo Deposito LPD')
+                ->descriptionIcon(Heroicon::OutlinedDocumentCurrencyDollar)
                 ->icon(Heroicon::OutlinedBanknotes)
-                ->color($saldoBanjar >= 0 ? 'primary' : 'danger')
+                ->color('primary')
                 ->extraAttributes([
                     'class' => 'bg-primary-50 dark:bg-primary-950/30 border border-primary-100 dark:border-primary-900 p-2 sm:p-4',
                 ]),
-                
-            Stat::make('Saldo Kas Prajuru', 'Rp ' . number_format($saldoKasPrajuru, 0, ',', '.'))
-                ->description('Saldo Kas Prajuru')
-                ->descriptionIcon(Heroicon::OutlinedScale)
-                ->icon(Heroicon::OutlinedBanknotes)                
-                ->color($saldoBanjar >= 0 ? 'primary' : 'danger')
+
+            Stat::make('Saldo Tabungan LPD', 'Rp ' . number_format($saldoTabunganLPD, 0, ',', '.'))
+                ->description('Saldo Tabungan LPD')
+                ->descriptionIcon(Heroicon::OutlinedDocumentCurrencyDollar)
+                ->icon(Heroicon::OutlinedBanknotes)
+                ->color('success')
                 ->extraAttributes([
-                    'class' => 'bg-danger-50 dark:bg-danger-950/30 border border-danger-100 dark:border-danger-900 p-2 sm:p-4',
+                    'class' => 'bg-success-50 dark:bg-success-950/30 border border-success-100 dark:border-success-900 p-2 sm:p-4',
                 ]),
+
+            Stat::make('Saldo Dana Cash', 'Rp ' . number_format($saldoDanaCash, 0, ',', '.'))
+                ->description('Saldo Dana Cash')
+                ->descriptionIcon(Heroicon::OutlinedDocumentCurrencyDollar)
+                ->icon(Heroicon::OutlinedBanknotes)
+                ->color('warning')
+                ->extraAttributes([
+                    'class' => 'bg-warning-50 dark:bg-warning-950/30 border border-warning-100 dark:border-warning-900 p-2 sm:p-4',
+                ]),
+
 
             
         ];
