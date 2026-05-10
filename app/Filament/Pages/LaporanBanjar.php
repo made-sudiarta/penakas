@@ -4,8 +4,9 @@ namespace App\Filament\Pages;
 
 use App\Models\KategoriDanaBanjar;
 use App\Models\TransaksiBanjar;
-use BackedEnum;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Section;
@@ -16,13 +17,16 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
-use UnitEnum;
+use Livewire\Component;
+use Filament\Actions\Action;
+use UnitEnum, BackedEnum;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class LaporanBanjar extends Page implements HasTable, HasForms
 {
     use InteractsWithTable;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedChartPie;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedChartBar;
 
     protected static string|UnitEnum|null $navigationGroup = 'Laporan';
 
@@ -34,31 +38,53 @@ class LaporanBanjar extends Page implements HasTable, HasForms
 
     protected string $view = 'filament.pages.laporan-banjar';
 
-    public ?int $kategori_dana_banjar_id = null;
-
-    public ?int $bulan = null;
-
-    public ?int $tahun = null;
+    public ?array $kategori_dana_banjar_id = [];
+    public ?string $start_date = null;
+    public ?string $end_date = null;
 
     public function mount(): void
     {
-        $this->bulan = (int) now()->format('n');
-        $this->tahun = (int) now()->format('Y');
+        // Initialize properties
+    }
+
+    public function updatedStartDate(): void
+    {
+        // Sanitasi dan validasi data
+        $this->start_date = $this->sanitizeDate($this->start_date);
+        $this->resetTable();
+    }
+
+    public function updatedEndDate(): void
+    {
+        // Sanitasi dan validasi data
+        $this->end_date = $this->sanitizeDate($this->end_date);
+        $this->resetTable();
+    }
+
+    private function sanitizeDate($date): string
+    {
+        return htmlspecialchars(trim($date), ENT_QUOTES, 'UTF-8');
     }
 
     public function updatedKategoriDanaBanjarId(): void
     {
+        // Validasi dan sanitasi input kategori dana banjar
+        $this->kategori_dana_banjar_id = array_map(function($item) {
+            return (int) $item; // Pastikan ID yang diterima adalah integer
+        }, $this->kategori_dana_banjar_id);
+
         $this->resetTable();
     }
 
-    public function updatedBulan(): void
+    protected function getHeaderActions(): array
     {
-        $this->resetTable();
-    }
-
-    public function updatedTahun(): void
-    {
-        $this->resetTable();
+        return [
+            Action::make('print_pdf')
+                ->label('Print PDF')
+                ->icon('heroicon-o-printer')
+                ->color('danger')
+                ->action('generatePdf'),
+        ];
     }
 
     public function form(Schema $schema): Schema
@@ -70,28 +96,37 @@ class LaporanBanjar extends Page implements HasTable, HasForms
                     ->schema([
                         Select::make('kategori_dana_banjar_id')
                             ->label('Kategori Dana')
-                            ->options(
-                                KategoriDanaBanjar::query()
-                                    ->orderBy('nama')
-                                    ->pluck('nama', 'id')
-                                    ->toArray()
+                            ->options(fn () => KategoriDanaBanjar::query()
+                                ->when(
+                                    filled($this->kategori_dana_banjar_id),
+                                    fn ($query) => $query->whereNotIn(
+                                        'id',
+                                        $this->kategori_dana_banjar_id
+                                    )
+                                )
+                                ->orderBy('nama')
+                                ->pluck('nama', 'id')
+                                ->toArray()
                             )
                             ->placeholder('Semua Kategori')
                             ->native(false)
+                            ->multiple()
+                            ->searchable()
+                            ->preload()
                             ->live()
                             ->afterStateUpdated(fn () => $this->resetTable()),
-
-                        Select::make('bulan')
-                            ->label('Bulan')
-                            ->options($this->getBulanOptions())
+                        // Filter untuk Rentang Tanggal menggunakan DatePicker
+                        DatePicker::make('start_date')
+                            ->label('Tanggal Mulai')
+                            ->placeholder('Pilih Tanggal Mulai')
                             ->native(false)
                             ->live()
                             ->afterStateUpdated(fn () => $this->resetTable())
                             ->required(),
 
-                        Select::make('tahun')
-                            ->label('Tahun')
-                            ->options($this->getTahunOptions())
+                        DatePicker::make('end_date')
+                            ->label('Tanggal Akhir')
+                            ->placeholder('Pilih Tanggal Akhir')
                             ->native(false)
                             ->live()
                             ->afterStateUpdated(fn () => $this->resetTable())
@@ -153,6 +188,32 @@ class LaporanBanjar extends Page implements HasTable, HasForms
             ->defaultSort('tanggal', 'desc');
     }
 
+    public function generatePdf(): StreamedResponse
+    {
+        $data = $this->getTransaksiQuery()->get();
+
+        if ($data->isEmpty()) {
+            abort(404, 'Data tidak ditemukan');
+        }
+
+        $pdf = Pdf::loadView(
+            'filament.pages.laporan-banjar-pdf',
+            [
+                'data' => $data,
+                'totalPemasukan' => $this->totalPemasukan,
+                'totalPengeluaran' => $this->totalPengeluaran,
+                'saldo' => $this->saldo,
+                'start_date' => $this->start_date,
+                'end_date' => $this->end_date,
+            ]
+        )->setPaper('a4', 'portrait');
+
+        return response()->streamDownload(
+            fn () => print($pdf->output()),
+            'laporan-banjar.pdf'
+        );
+    }
+
     public function getTotalPemasukanProperty(): float
     {
         return (float) $this->getTransaksiQuery()
@@ -177,37 +238,35 @@ class LaporanBanjar extends Page implements HasTable, HasForms
         return TransaksiBanjar::query()
             ->with('kategoriDanaBanjar')
             ->when(
-                $this->kategori_dana_banjar_id,
-                fn ($query) => $query->where('kategori_dana_banjar_id', $this->kategori_dana_banjar_id)
+                $this->kategori_dana_banjar_id && count($this->kategori_dana_banjar_id) > 0,
+                fn ($query) => $query->whereIn(
+                    'kategori_dana_banjar_id',
+                    $this->kategori_dana_banjar_id
+                )
             )
-            ->whereYear('tanggal', (int) $this->tahun)
-            ->whereMonth('tanggal', (int) $this->bulan);
+            ->when(
+                $this->start_date && $this->end_date,
+                fn ($query) => $query->whereBetween(
+                    'tanggal',
+                    [$this->start_date, $this->end_date]
+                )
+            )
+
+            // SORTING
+            ->orderBy('tanggal', 'asc');
     }
 
-    protected function getBulanOptions(): array
+    protected function getDateOptions(): array
     {
-        return [
-            1 => 'Januari',
-            2 => 'Februari',
-            3 => 'Maret',
-            4 => 'April',
-            5 => 'Mei',
-            6 => 'Juni',
-            7 => 'Juli',
-            8 => 'Agustus',
-            9 => 'September',
-            10 => 'Oktober',
-            11 => 'November',
-            12 => 'Desember',
-        ];
-    }
+        $currentYear = (int) now()->format('Y');
+        $currentMonth = (int) now()->format('m');
 
-    protected function getTahunOptions(): array
-    {
-        $tahunSekarang = (int) now()->format('Y');
+        // Generate range tanggal untuk bulan sekarang
+        $daysInMonth = now()->daysInMonth;
+        $days = range(1, $daysInMonth);
 
-        return collect(range($tahunSekarang - 5, $tahunSekarang + 1))
-            ->mapWithKeys(fn ($tahun) => [$tahun => (string) $tahun])
-            ->toArray();
+        return collect($days)->mapWithKeys(fn ($day) => [
+            $day => $currentYear . '-' . str_pad($currentMonth, 2, '0', STR_PAD_LEFT) . '-' . str_pad($day, 2, '0', STR_PAD_LEFT),
+        ])->toArray();
     }
 }
