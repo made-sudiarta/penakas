@@ -109,6 +109,7 @@ class PembayaranKostForm
                         FileUpload::make('bukti_pembayaran')
                             ->label('Bukti Pembayaran')
                             ->image()
+                            ->disk('public')
                             ->directory('bukti-pembayaran-kost')
                             ->visibility('public')
                             ->imageEditor()
