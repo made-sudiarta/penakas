@@ -260,5 +260,61 @@
                 padding: 36px 24px !important;
             }
         }
+        /* FORCE LIGHT MODE TEXT */
+
+.penakas-login-page,
+.penakas-login-page * {
+    color: #0f172a !important;
+}
+
+/* Input */
+.penakas-login-page input,
+.penakas-login-page textarea,
+.penakas-login-page select {
+    color: #0f172a !important;
+    background: #ffffff !important;
+}
+
+/* Label */
+.penakas-login-page label,
+.penakas-login-page span,
+.penakas-login-page p,
+.penakas-login-page div {
+    color: inherit !important;
+}
+
+/* Remember me */
+.penakas-login-page .fi-checkbox-list-option-label,
+.penakas-login-page .fi-checkbox label,
+.penakas-login-page .fi-fo-checkbox label {
+    color: #0f172a !important;
+}
+
+/* Placeholder */
+.penakas-login-page input::placeholder {
+    color: #94a3b8 !important;
+}
+
+/* Required marker */
+.penakas-login-page .fi-fo-field-wrp-required-marker {
+    color: #ef4444 !important;
+}
+
+/* Checkbox */
+.penakas-login-page input[type="checkbox"] {
+    accent-color: #7e22ce;
+}
+
+/* Filament dark theme override */
+.dark .penakas-login-page,
+.dark .penakas-login-page * {
+    color: #0f172a !important;
+}
+
+/* Jangan ubah button */
+.penakas-login-page button,
+.penakas-login-page button * {
+    color: #ffffff !important;
+}
     </style>
 </div>
