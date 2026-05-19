@@ -71,6 +71,7 @@ class TransaksiBanjarForm
                         FileUpload::make('foto_nota')
                             ->label('Foto Nota / Kuitansi')
                             ->image()
+                            ->disk('public')
                             ->directory('nota-banjar')
                             ->visibility('public')
                             ->imageEditor()
