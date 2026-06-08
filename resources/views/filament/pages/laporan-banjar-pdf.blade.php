@@ -329,7 +329,7 @@
 
                 <td width="50%">
                     Denpasar,
-                    {{ now()->translatedFormat('d F Y') }}
+                    {{ $end_date->translatedFormat('d F Y') }}
                     <br>
 
                     <span class="jabatan">
