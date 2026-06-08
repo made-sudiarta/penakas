@@ -157,38 +157,62 @@ class PenaKasOverview extends StatsOverviewWidget
         //     ->sum('nominal');
 
 
-        $saldoDepositoLPD = TransaksiBanjar::query()
-            ->where('kategori_dana_banjar_id', 1) // Deposito LPD category ID
-            ->where('tipe', 'pemasukan') // Pemasukan for Deposito LPD
-            ->sum('nominal') 
+        $saldoDepositoLPD = 
+            TransaksiBanjar::query()
+                ->where('kategori_dana_banjar_id', 1) // Deposito LPD category ID
+                ->where('tipe', 'kas-awal') // Pemasukan for Deposito LPD
+                ->sum('nominal') 
+            +
+            TransaksiBanjar::query()
+                ->where('kategori_dana_banjar_id', 1) // Deposito LPD category ID
+                ->where('tipe', 'pemasukan') // Pemasukan for Deposito LPD
+                ->sum('nominal') 
             - TransaksiBanjar::query()
                 ->where('kategori_dana_banjar_id', 1) // Deposito LPD category ID
                 ->where('tipe', 'pengeluaran') // Pengeluaran for Deposito LPD
                 ->sum('nominal');
 
-        $saldoTabunganLPD = TransaksiBanjar::query()
-            ->where('kategori_dana_banjar_id', 2) // Tabungan LPD category ID
-            ->where('tipe', 'pemasukan') // Pemasukan for Tabungan LPD
-            ->sum('nominal')
+        $saldoTabunganLPD = 
+            TransaksiBanjar::query()
+                ->where('kategori_dana_banjar_id', 2) // Deposito LPD category ID
+                ->where('tipe', 'kas-awal') // Pemasukan for Deposito LPD
+                ->sum('nominal') 
+            +
+            TransaksiBanjar::query()
+                ->where('kategori_dana_banjar_id', 2) // Tabungan LPD category ID
+                ->where('tipe', 'pemasukan') // Pemasukan for Tabungan LPD
+                ->sum('nominal')
             - TransaksiBanjar::query()
                 ->where('kategori_dana_banjar_id', 2) // Tabungan LPD category ID
                 ->where('tipe', 'pengeluaran') // Pengeluaran for Tabungan LPD
                 ->sum('nominal');
 
-        $saldoDanaCashBanjar = TransaksiBanjar::query()
-            ->where('kategori_dana_banjar_id', 7) // Dana Cash category ID
-            ->where('tipe', 'pemasukan') // Pemasukan for Dana Cash
-            ->sum('nominal')
+        $saldoDanaCashBanjar = 
+            TransaksiBanjar::query()
+                ->where('kategori_dana_banjar_id', 7) // Deposito LPD category ID
+                ->where('tipe', 'kas-awal') // Pemasukan for Deposito LPD
+                ->sum('nominal') 
+            +
+            TransaksiBanjar::query()
+                ->where('kategori_dana_banjar_id', 7) // Dana Cash category ID
+                ->where('tipe', 'pemasukan') // Pemasukan for Dana Cash
+                ->sum('nominal')
             - TransaksiBanjar::query()
                 ->where('kategori_dana_banjar_id', 7) // Dana Cash category ID
                 ->where('tipe', 'pengeluaran') // Pengeluaran for Dana Cash
                 ->sum('nominal');
 
         // Saldo Prajuru
-        $saldoKasPrajuru = TransaksiBanjar::query()
-            ->where('kategori_dana_banjar_id', 8) // Kas Prajuru category ID
-            ->where('tipe', 'pemasukan') // Pemasukan for Kas Prajuru
-            ->sum('nominal')
+        $saldoKasPrajuru = 
+            TransaksiBanjar::query()
+                ->where('kategori_dana_banjar_id', 8) // Deposito LPD category ID
+                ->where('tipe', 'kas-awal') // Pemasukan for Deposito LPD
+                ->sum('nominal') 
+            +
+            TransaksiBanjar::query()
+                ->where('kategori_dana_banjar_id', 8) // Kas Prajuru category ID
+                ->where('tipe', 'pemasukan') // Pemasukan for Kas Prajuru
+                ->sum('nominal')
             - TransaksiBanjar::query()
                 ->where('kategori_dana_banjar_id', 8) // Kas Prajuru category ID
                 ->where('tipe', 'pengeluaran') // Pengeluaran for Kas Prajuru

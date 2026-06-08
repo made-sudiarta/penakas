@@ -37,6 +37,7 @@ class TransaksiBanjarForm
                             ->options([
                                 'pemasukan' => 'Pemasukan',
                                 'pengeluaran' => 'Pengeluaran',
+                                'kas-awal' => 'Kas Awal',
                             ])
                             ->native(false)
                             ->default('pemasukan')

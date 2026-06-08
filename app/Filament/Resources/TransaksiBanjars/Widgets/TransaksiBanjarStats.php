@@ -31,39 +31,67 @@ class TransaksiBanjarStats extends StatsOverviewWidget
             ->where('tipe', 'pengeluaran')
             ->sum('nominal');
 
-        $depositoLPD = TransaksiBanjar::query()
-            ->where('kategori_dana_banjar_id', 1)
-            ->where('tipe', 'pemasukan')
-            ->sum('nominal')
-            - TransaksiBanjar::query()
-            ->where('kategori_dana_banjar_id', 1)
-            ->where('tipe', 'pengeluaran')
-            ->sum('nominal');
+        $depositoLPD =
+            TransaksiBanjar::query()
+                ->where('kategori_dana_banjar_id', 1)
+                ->where('tipe', 'kas-awal')
+                ->sum('nominal')
+            +
+            TransaksiBanjar::query()
+                ->where('kategori_dana_banjar_id', 1)
+                ->where('tipe', 'pemasukan')
+                ->sum('nominal')
+            -
+            TransaksiBanjar::query()
+                ->where('kategori_dana_banjar_id', 1)
+                ->where('tipe', 'pengeluaran')
+                ->sum('nominal');
 
-        $tabunganLPD = TransaksiBanjar::query()
-            ->where('kategori_dana_banjar_id', 2)
-            ->where('tipe', 'pemasukan')
-            ->sum('nominal')
-            - TransaksiBanjar::query()
-            ->where('kategori_dana_banjar_id', 2)
-            ->where('tipe', 'pengeluaran')
-            ->sum('nominal');
-        $danaCash = TransaksiBanjar::query()
-            ->where('kategori_dana_banjar_id', 7)
-            ->where('tipe', 'pemasukan')
-            ->sum('nominal')
-            - TransaksiBanjar::query()
-            ->where('kategori_dana_banjar_id', 7)
-            ->where('tipe', 'pengeluaran')
-            ->sum('nominal');
-        $kasPrajuru = TransaksiBanjar::query()
-            ->where('kategori_dana_banjar_id', 8)
-            ->where('tipe', 'pemasukan')
-            ->sum('nominal')
-            - TransaksiBanjar::query()
-            ->where('kategori_dana_banjar_id', 8)
-            ->where('tipe', 'pengeluaran')
-            ->sum('nominal');
+        $tabunganLPD = 
+        TransaksiBanjar::query()
+                ->where('kategori_dana_banjar_id', 2)
+                ->where('tipe', 'kas-awal')
+                ->sum('nominal')
+            +
+            TransaksiBanjar::query()
+                ->where('kategori_dana_banjar_id', 2)
+                ->where('tipe', 'pemasukan')
+                ->sum('nominal')
+            -
+            TransaksiBanjar::query()
+                ->where('kategori_dana_banjar_id', 2)
+                ->where('tipe', 'pengeluaran')
+                ->sum('nominal');
+        $danaCash = 
+            TransaksiBanjar::query()
+                ->where('kategori_dana_banjar_id', 7)
+                ->where('tipe', 'kas-awal')
+                ->sum('nominal')
+            +
+            TransaksiBanjar::query()
+                ->where('kategori_dana_banjar_id', 7)
+                ->where('tipe', 'pemasukan')
+                ->sum('nominal')
+            -
+            TransaksiBanjar::query()
+                ->where('kategori_dana_banjar_id', 7)
+                ->where('tipe', 'pengeluaran')
+                ->sum('nominal');
+        $kasPrajuru = 
+            TransaksiBanjar::query()
+                ->where('kategori_dana_banjar_id', 8)
+                ->where('tipe', 'kas-awal')
+                ->sum('nominal')
+            +
+            TransaksiBanjar::query()
+                ->where('kategori_dana_banjar_id', 8)
+                ->where('tipe', 'pemasukan')
+                ->sum('nominal')
+            -
+            TransaksiBanjar::query()
+                ->where('kategori_dana_banjar_id', 8)
+                ->where('tipe', 'pengeluaran')
+                ->sum('nominal');
 
         $saldoBanjar = $depositoLPD + $tabunganLPD + $danaCash + $kasPrajuru;
 

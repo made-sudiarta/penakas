@@ -188,30 +188,91 @@ class LaporanBanjar extends Page implements HasTable, HasForms
             ->defaultSort('tanggal', 'desc');
     }
 
+    // public function generatePdf(): StreamedResponse
+    // {
+    //     $data = $this->getTransaksiQuery()->get();
+
+    //     if ($data->isEmpty()) {
+    //         abort(404, 'Data tidak ditemukan');
+    //     }
+
+    //     $pdf = Pdf::loadView(
+    //         'filament.pages.laporan-banjar-pdf',
+    //         [
+    //             'data' => $data,
+    //             'totalKasAwal' => $this->totalKasAwal,
+    //             'totalPemasukan' => $this->totalPemasukan,
+    //             'totalPengeluaran' => $this->totalPengeluaran,
+    //             'saldo' => $this->saldo,
+    //             'start_date' => $this->start_date,
+    //             'end_date' => $this->end_date,
+    //         ]
+    //     )->setPaper('a4', 'portrait');
+
+    //     return response()->streamDownload(
+    //         fn () => print($pdf->output()),
+    //         'laporan-banjar.pdf'
+    //     );
+    // }
+
     public function generatePdf(): StreamedResponse
+{
+    $data = $this->getTransaksiQuery()->get();
+
+    if ($data->isEmpty()) {
+        abort(404, 'Data tidak ditemukan');
+    }
+
+    $kategoriIds = $data
+    ->pluck('kategori_dana_banjar_id')
+    ->unique()
+    ->values();
+
+    if ($kategoriIds->count() === 1 && $kategoriIds->first() == 8) {
+        $judulLaporan = 'Laporan Keuangan Prajuru';
+    } elseif ($kategoriIds->contains(8)) {
+        $judulLaporan = 'Laporan Keuangan Banjar dan Prajuru';
+    } else {
+        $judulLaporan = 'Laporan Keuangan Banjar';
+    }
+
+    $startDate = $this->start_date;
+    $endDate = $this->end_date;
+
+    // Jika tidak ada filter tanggal
+    if (!$startDate) {
+        $startDate = $data->min('tanggal');
+    }
+
+    if (!$endDate) {
+        $endDate = $data->max('tanggal');
+    }
+
+    $pdf = Pdf::loadView(
+        'filament.pages.laporan-banjar-pdf',
+        [
+            'judulLaporan' => $judulLaporan,
+            'data' => $data,
+            'totalKasAwal' => $this->totalKasAwal,
+            'totalPemasukan' => $this->totalPemasukan,
+            'totalPengeluaran' => $this->totalPengeluaran,
+            'saldo' => $this->saldo,
+            'start_date' => $startDate,
+            'end_date' => $endDate,
+        ]
+    )->setPaper('a4', 'portrait');
+
+    return response()->streamDownload(
+        fn () => print($pdf->output()),
+        'laporan-banjar.pdf'
+    );
+}
+
+    public function getTotalKasAwalProperty(): float
     {
-        $data = $this->getTransaksiQuery()->get();
-
-        if ($data->isEmpty()) {
-            abort(404, 'Data tidak ditemukan');
-        }
-
-        $pdf = Pdf::loadView(
-            'filament.pages.laporan-banjar-pdf',
-            [
-                'data' => $data,
-                'totalPemasukan' => $this->totalPemasukan,
-                'totalPengeluaran' => $this->totalPengeluaran,
-                'saldo' => $this->saldo,
-                'start_date' => $this->start_date,
-                'end_date' => $this->end_date,
-            ]
-        )->setPaper('a4', 'portrait');
-
-        return response()->streamDownload(
-            fn () => print($pdf->output()),
-            'laporan-banjar.pdf'
-        );
+        return (float) $this->getTransaksiQuery()
+            ->where('tipe', 'kas-awal')
+            ->sum('nominal');
     }
 
     public function getTotalPemasukanProperty(): float
@@ -230,7 +291,9 @@ class LaporanBanjar extends Page implements HasTable, HasForms
 
     public function getSaldoProperty(): float
     {
-        return $this->totalPemasukan - $this->totalPengeluaran;
+        return $this->totalKasAwal
+            + $this->totalPemasukan
+            - $this->totalPengeluaran;
     }
 
     protected function getTransaksiQuery()

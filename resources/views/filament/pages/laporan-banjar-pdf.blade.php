@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="utf-8">
-    <title>Laporan Keuangan Banjar</title>
+    <title>{{ $judulLaporan }}</title>
 
     <style>
         @page {
@@ -125,6 +125,10 @@
             color: #c1121f;
             font-weight: bold;
         }
+        .badge-info {
+            color: #2695ef;
+            font-weight: bold;
+        }
 
         /* SUMMARY */
         .summary {
@@ -208,7 +212,7 @@
 
     <!-- TITLE -->
     <div class="report-title">
-        <h3>LAPORAN KEUANGAN BANJAR</h3>
+        <h3>{{ $judulLaporan }}</h3>
 
         <div class="periode">
             Periode :
@@ -246,7 +250,11 @@
                     </td>
 
                     <td class="text-center">
-                        @if($item->tipe == 'pemasukan')
+                        @if($item->tipe === 'kas-awal')
+                            <span class="badge-info">
+                                Kas Awal
+                            </span>
+                        @elseif($item->tipe === 'pemasukan')
                             <span class="badge-masuk">
                                 Pemasukan
                             </span>
@@ -273,6 +281,12 @@
 
     <!-- SUMMARY -->
     <table class="summary">
+        <tr>
+            <th>Saldo Awal</th>
+            <td class="text-right">
+                Rp {{ number_format($totalKasAwal, 0, ',', '.') }}
+            </td>
+        </tr>
         <tr>
             <th>Total Pemasukan</th>
             <td class="text-right">
