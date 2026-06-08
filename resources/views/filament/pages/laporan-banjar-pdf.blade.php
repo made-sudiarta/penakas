@@ -329,7 +329,7 @@
 
                 <td width="50%">
                     Denpasar,
-                    {{ $end_date->translatedFormat('d F Y') }}
+                    {{ $end_date ? \Carbon\Carbon::parse($end_date)->translatedFormat('d F Y') : '-' }}
                     <br>
 
                     <span class="jabatan">
