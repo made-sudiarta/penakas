@@ -171,7 +171,7 @@ class LaporanBanjar extends Page implements HasTable, HasForms
 
     public function generatePdf(): StreamedResponse
     {
-        $data = $this->getTransaksiQuery()->get();
+        $data = $this->getTransaksiQuery()->with(['akun'])->get();
 
         if ($data->isEmpty()) {
             abort(404, 'Data tidak ditemukan');

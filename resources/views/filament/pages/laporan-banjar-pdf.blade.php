@@ -13,7 +13,7 @@
 
         body {
             font-family: Arial, Helvetica, sans-serif;
-            font-size: 12px;
+            font-size: 11px;
             color: #222;
         }
 
@@ -229,23 +229,43 @@
     <table class="main-table">
         <thead>
             <tr>
+                <th width="5%">No.</th>
                 <th width="10%">Tanggal</th>
-                <th width="13%">Kategori</th>
-                <th>Judul</th>
+                <th width="8%">No. Acc</th>
+                <th>Keterangan</th>
                 <th width="15%">Tipe</th>
                 <th width="15%">Nominal</th>
+                <th width="15%">Saldo</th>
             </tr>
         </thead>
 
         <tbody>
+
+            @php
+                $saldoBerjalan = 0;
+                $no = 1;
+            @endphp
+
             @forelse ($data as $item)
+
+                @php
+                    if ($item->tipe === 'kas-awal') {
+                        $saldoBerjalan += $item->nominal;
+                    } elseif ($item->tipe === 'pemasukan') {
+                        $saldoBerjalan += $item->nominal;
+                    } elseif ($item->tipe === 'pengeluaran') {
+                        $saldoBerjalan -= $item->nominal;
+                    }
+                @endphp
+
                 <tr>
+                    <td class="text-center">{{ $no++ }}</td>
                     <td class="text-center">
                         {{ \Carbon\Carbon::parse($item->tanggal)->format('d/m/Y') }}
                     </td>
 
-                    <td>
-                        {{ $item->kategoriDanaBanjar->nama ?? '-' }}
+                    <td class="text-center">
+                        {{ $item->akun?->kode ?? '-' }}
                     </td>
 
                     <td>
@@ -271,22 +291,55 @@
                     <td class="text-right">
                         Rp {{ number_format($item->nominal, 0, ',', '.') }}
                     </td>
+
+                    <td class="text-right">
+                        Rp {{ number_format($saldoBerjalan, 0, ',', '.') }}
+                    </td>
                 </tr>
+
             @empty
+
                 <tr>
-                    <td colspan="5" class="text-center">
+                    <td colspan="6" class="text-center">
                         Tidak ada data laporan
                     </td>
                 </tr>
             @endforelse
+
         </tbody>
     </table>
 
     <!-- SUMMARY -->
 
     <div style="margin-top:20px; margin-bottom:10px;">
-        <strong>Jenis Laporan:</strong>
-        {{ $judulLaporan }}
+        <strong>Kategori Dana:</strong>
+
+        <ol style="margin-top:5px; padding-left:20px;">
+            @foreach(
+                $data->groupBy('kategori_dana_banjar_id')
+                as $kategoriTransaksi
+            )
+
+                @php
+                    $kategori = $kategoriTransaksi->first()->kategoriDanaBanjar;
+
+                    $saldoKategori =
+                        $kategoriTransaksi
+                            ->whereIn('tipe', ['kas-awal', 'pemasukan'])
+                            ->sum('nominal')
+                        -
+                        $kategoriTransaksi
+                            ->where('tipe', 'pengeluaran')
+                            ->sum('nominal');
+                @endphp
+
+                <li>
+                    {{ $kategori?->nama ?? '-' }}
+                    (Rp {{ number_format($saldoKategori, 0, ',', '.') }})
+                </li>
+
+            @endforeach
+        </ol>
     </div>
 
     <table class="summary">
