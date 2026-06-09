@@ -10,6 +10,7 @@ use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use App\Models\PeriodeBanjar;
 
 class TransaksiBanjarsTable
 {
@@ -22,6 +23,19 @@ class TransaksiBanjarsTable
                     ->date('d M Y')
                     ->sortable(),
 
+                TextColumn::make('periode.nama')
+                    ->label('Periode')
+                    ->sortable()
+                    ->searchable(),
+
+                TextColumn::make('akun.kode')
+                    ->label('Kode')
+                    ->sortable(),
+
+                TextColumn::make('akun.nama')
+                    ->label('Akun')
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('kategoriDanaBanjar.nama')
                     ->label('Kategori')
                     ->searchable()
@@ -82,11 +96,29 @@ class TransaksiBanjarsTable
                         'pemasukan' => 'Pemasukan',
                         'pengeluaran' => 'Pengeluaran',
                     ]),
+                SelectFilter::make('periode_banjar_id')
+                    ->relationship('periode', 'nama')
+                    ->label('Periode')
+                    ->default(
+                        fn () => PeriodeBanjar::query()
+                            ->where('is_active', true)
+                            ->value('id')
+                    )
+                    ->searchable()
+                    ->preload(),
             ])
             ->defaultSort('tanggal', 'desc')
             ->recordActions([
-                EditAction::make(),
-                DeleteAction::make(),
+                EditAction::make()
+                    ->visible(
+                        fn ($record) =>
+                            ! $record->periode?->is_closed
+                    ),
+                DeleteAction::make()
+                    ->visible(
+                        fn ($record) =>
+                            ! $record->periode?->is_closed
+                    ),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

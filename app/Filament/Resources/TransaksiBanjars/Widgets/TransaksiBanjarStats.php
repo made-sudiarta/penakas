@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\TransaksiBanjars\Widgets;
 
+use App\Models\PeriodeBanjar;
 use App\Models\TransaksiBanjar;
 use Filament\Support\Icons\Heroicon;
 use Filament\Widgets\StatsOverviewWidget;
@@ -9,8 +10,6 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class TransaksiBanjarStats extends StatsOverviewWidget
 {
-    protected ?string $heading = 'Ringkasan Transaksi Banjar';
-
     protected ?string $description = 'Statistik pemasukan, pengeluaran, dan saldo dana banjar.';
 
     protected function getColumns(): int|array
@@ -21,115 +20,82 @@ class TransaksiBanjarStats extends StatsOverviewWidget
         ];
     }
 
+    protected function getHeading(): ?string
+    {
+        $periode = PeriodeBanjar::query()
+            ->where('is_active', true)
+            ->first();
+
+        return 'Ringkasan Transaksi - ' . ($periode?->nama ?? 'Tidak Ada Periode Aktif');
+    }
+
+    protected function getSaldoKategori(int $kategoriId): float
+    {
+        $periodeAktifId = PeriodeBanjar::query()
+            ->where('is_active', true)
+            ->value('id');
+
+        if (! $periodeAktifId) {
+            return 0;
+        }
+
+        $query = TransaksiBanjar::query()
+            ->where('periode_banjar_id', $periodeAktifId)
+            ->where('kategori_dana_banjar_id', $kategoriId);
+
+        return
+            (clone $query)
+                ->whereIn('tipe', ['kas-awal', 'pemasukan'])
+                ->sum('nominal')
+            -
+            (clone $query)
+                ->where('tipe', 'pengeluaran')
+                ->sum('nominal');
+    }
+
     protected function getStats(): array
     {
-        $pemasukan = TransaksiBanjar::query()
-            ->where('tipe', 'pemasukan')
-            ->sum('nominal');
-
-        $pengeluaran = TransaksiBanjar::query()
-            ->where('tipe', 'pengeluaran')
-            ->sum('nominal');
-
-        $depositoLPD =
-            TransaksiBanjar::query()
-                ->where('kategori_dana_banjar_id', 1)
-                ->where('tipe', 'kas-awal')
-                ->sum('nominal')
-            +
-            TransaksiBanjar::query()
-                ->where('kategori_dana_banjar_id', 1)
-                ->where('tipe', 'pemasukan')
-                ->sum('nominal')
-            -
-            TransaksiBanjar::query()
-                ->where('kategori_dana_banjar_id', 1)
-                ->where('tipe', 'pengeluaran')
-                ->sum('nominal');
-
-        $tabunganLPD = 
-        TransaksiBanjar::query()
-                ->where('kategori_dana_banjar_id', 2)
-                ->where('tipe', 'kas-awal')
-                ->sum('nominal')
-            +
-            TransaksiBanjar::query()
-                ->where('kategori_dana_banjar_id', 2)
-                ->where('tipe', 'pemasukan')
-                ->sum('nominal')
-            -
-            TransaksiBanjar::query()
-                ->where('kategori_dana_banjar_id', 2)
-                ->where('tipe', 'pengeluaran')
-                ->sum('nominal');
-        $danaCash = 
-            TransaksiBanjar::query()
-                ->where('kategori_dana_banjar_id', 7)
-                ->where('tipe', 'kas-awal')
-                ->sum('nominal')
-            +
-            TransaksiBanjar::query()
-                ->where('kategori_dana_banjar_id', 7)
-                ->where('tipe', 'pemasukan')
-                ->sum('nominal')
-            -
-            TransaksiBanjar::query()
-                ->where('kategori_dana_banjar_id', 7)
-                ->where('tipe', 'pengeluaran')
-                ->sum('nominal');
-        $kasPrajuru = 
-            TransaksiBanjar::query()
-                ->where('kategori_dana_banjar_id', 8)
-                ->where('tipe', 'kas-awal')
-                ->sum('nominal')
-            +
-            TransaksiBanjar::query()
-                ->where('kategori_dana_banjar_id', 8)
-                ->where('tipe', 'pemasukan')
-                ->sum('nominal')
-            -
-            TransaksiBanjar::query()
-                ->where('kategori_dana_banjar_id', 8)
-                ->where('tipe', 'pengeluaran')
-                ->sum('nominal');
-
-        $saldoBanjar = $depositoLPD + $tabunganLPD + $danaCash + $kasPrajuru;
+        $depositoLPD = $this->getSaldoKategori(1);
+        $tabunganLPD = $this->getSaldoKategori(2);
+        $danaCash    = $this->getSaldoKategori(7);
+        $kasPrajuru  = $this->getSaldoKategori(8);
 
         return [
-            Stat::make('Deposito LPD', 'Rp ' . number_format($depositoLPD, 0, ',', '.'))
-                ->description('Pemasukan')
-                ->descriptionIcon(Heroicon::OutlinedArrowDownCircle)
+            Stat::make(
+                'Deposito LPD',
+                'Rp ' . number_format($depositoLPD, 0, ',', '.')
+            )
+                ->description('Saldo Deposito')
+                ->descriptionIcon(Heroicon::OutlinedBanknotes)
                 ->icon(Heroicon::OutlinedBanknotes)
-                ->color('success')
-                ->extraAttributes([
-                    'class' => 'bg-success-50 dark:bg-success-950/30 border border-success-100 dark:border-success-900 p-2 sm:p-4',
-                ]),
+                ->color($depositoLPD >= 0 ? 'success' : 'danger'),
 
-            Stat::make('Tabungan LPD', 'Rp ' . number_format($tabunganLPD, 0, ',', '.'))
-                ->description('Pengeluaran')
-                ->descriptionIcon(Heroicon::OutlinedArrowUpCircle)
-                ->icon(Heroicon::OutlinedShoppingBag)
-                ->color('danger')
-                ->extraAttributes([
-                    'class' => 'bg-danger-50 dark:bg-danger-950/30 border border-danger-100 dark:border-danger-900 p-2 sm:p-4',
-                ]),
+            Stat::make(
+                'Tabungan LPD',
+                'Rp ' . number_format($tabunganLPD, 0, ',', '.')
+            )
+                ->description('Saldo Tabungan')
+                ->descriptionIcon(Heroicon::OutlinedWallet)
+                ->icon(Heroicon::OutlinedWallet)
+                ->color($tabunganLPD >= 0 ? 'success' : 'danger'),
 
-            Stat::make('Dana Cash', 'Rp ' . number_format($danaCash, 0, ',', '.'))
-                ->description('Sisa dana')
+            Stat::make(
+                'Dana Cash',
+                'Rp ' . number_format($danaCash, 0, ',', '.')
+            )
+                ->description('Saldo Dana Cash')
                 ->descriptionIcon(Heroicon::OutlinedScale)
                 ->icon(Heroicon::OutlinedWallet)
-                ->color($danaCash >= 0 ? 'primary' : 'danger')
-                ->extraAttributes([
-                    'class' => 'bg-primary-50 dark:bg-primary-950/30 border border-primary-100 dark:border-primary-900 p-2 sm:p-4',
-                ]),
-            Stat::make('Kas Prajuru', 'Rp ' . number_format($kasPrajuru, 0, ',', '.'))
-                ->description('Sisa dana')
+                ->color($danaCash >= 0 ? 'success' : 'danger'),
+
+            Stat::make(
+                'Kas Prajuru',
+                'Rp ' . number_format($kasPrajuru, 0, ',', '.')
+            )
+                ->description('Saldo Kas Prajuru')
                 ->descriptionIcon(Heroicon::OutlinedScale)
                 ->icon(Heroicon::OutlinedWallet)
-                ->color($kasPrajuru >= 0 ? 'primary' : 'danger')
-                ->extraAttributes([
-                    'class' => 'bg-primary-50 dark:bg-primary-950/30 border border-primary-100 dark:border-primary-900 p-2 sm:p-4',
-                ]),
+                ->color($kasPrajuru >= 0 ? 'success' : 'danger'),
         ];
     }
 }

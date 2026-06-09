@@ -8,11 +8,11 @@ use App\Filament\Resources\TransaksiBanjars\Pages\ListTransaksiBanjars;
 use App\Filament\Resources\TransaksiBanjars\Schemas\TransaksiBanjarForm;
 use App\Filament\Resources\TransaksiBanjars\Tables\TransaksiBanjarsTable;
 use App\Models\TransaksiBanjar;
-use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use BackedEnum;
 use UnitEnum;
 
 class TransaksiBanjarResource extends Resource
@@ -29,7 +29,7 @@ class TransaksiBanjarResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Transaksi Banjar';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 4;
 
     protected static ?string $recordTitleAttribute = 'judul';
 
@@ -51,4 +51,5 @@ class TransaksiBanjarResource extends Resource
             'edit' => EditTransaksiBanjar::route('/{record}/edit'),
         ];
     }
+    
 }

@@ -12,20 +12,20 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class PenaKasOverview extends StatsOverviewWidget
 {
-    protected ?string $heading = 'Dana Banjar Adat Minggir';
+    // protected ?string $heading = 'Dana Banjar Adat Minggir';
 
-    protected ?string $description = 'Rincian Dana Banjar dan Prajuru';
+    // protected ?string $description = 'Rincian Dana Banjar dan Prajuru';
 
-    protected static ?int $sort = 1;
+    // protected static ?int $sort = 1;
 
-    protected function getColumns(): int|array
-    {
-        return [
-            'default' => 1,
-            'md' => 2,
-            'xl' => 2,
-        ];
-    }
+    // protected function getColumns(): int|array
+    // {
+    //     return [
+    //         'default' => 1,
+    //         'md' => 2,
+    //         'xl' => 2,
+    //     ];
+    // }
 
     // protected function getStats(): array
     // {
@@ -143,107 +143,107 @@ class PenaKasOverview extends StatsOverviewWidget
     //             ]),
     //     ];
     // }
-    protected function getStats(): array
-    {
-        // Existing code...
+    // protected function getStats(): array
+    // {
+    //     // Existing code...
 
-        // Saldo Banjar - Pemasukan dan Pengeluaran
-        // $pemasukanBanjar = TransaksiBanjar::query()
-        //     ->where('tipe', 'pemasukan')
-        //     ->sum('nominal');
+    //     // Saldo Banjar - Pemasukan dan Pengeluaran
+    //     // $pemasukanBanjar = TransaksiBanjar::query()
+    //     //     ->where('tipe', 'pemasukan')
+    //     //     ->sum('nominal');
 
-        // $pengeluaranBanjar = TransaksiBanjar::query()
-        //     ->where('tipe', 'pengeluaran')
-        //     ->sum('nominal');
-
-
-        $saldoDepositoLPD = 
-            TransaksiBanjar::query()
-                ->where('kategori_dana_banjar_id', 1) // Deposito LPD category ID
-                ->where('tipe', 'kas-awal') // Pemasukan for Deposito LPD
-                ->sum('nominal') 
-            +
-            TransaksiBanjar::query()
-                ->where('kategori_dana_banjar_id', 1) // Deposito LPD category ID
-                ->where('tipe', 'pemasukan') // Pemasukan for Deposito LPD
-                ->sum('nominal') 
-            - TransaksiBanjar::query()
-                ->where('kategori_dana_banjar_id', 1) // Deposito LPD category ID
-                ->where('tipe', 'pengeluaran') // Pengeluaran for Deposito LPD
-                ->sum('nominal');
-
-        $saldoTabunganLPD = 
-            TransaksiBanjar::query()
-                ->where('kategori_dana_banjar_id', 2) // Deposito LPD category ID
-                ->where('tipe', 'kas-awal') // Pemasukan for Deposito LPD
-                ->sum('nominal') 
-            +
-            TransaksiBanjar::query()
-                ->where('kategori_dana_banjar_id', 2) // Tabungan LPD category ID
-                ->where('tipe', 'pemasukan') // Pemasukan for Tabungan LPD
-                ->sum('nominal')
-            - TransaksiBanjar::query()
-                ->where('kategori_dana_banjar_id', 2) // Tabungan LPD category ID
-                ->where('tipe', 'pengeluaran') // Pengeluaran for Tabungan LPD
-                ->sum('nominal');
-
-        $saldoDanaCashBanjar = 
-            TransaksiBanjar::query()
-                ->where('kategori_dana_banjar_id', 7) // Deposito LPD category ID
-                ->where('tipe', 'kas-awal') // Pemasukan for Deposito LPD
-                ->sum('nominal') 
-            +
-            TransaksiBanjar::query()
-                ->where('kategori_dana_banjar_id', 7) // Dana Cash category ID
-                ->where('tipe', 'pemasukan') // Pemasukan for Dana Cash
-                ->sum('nominal')
-            - TransaksiBanjar::query()
-                ->where('kategori_dana_banjar_id', 7) // Dana Cash category ID
-                ->where('tipe', 'pengeluaran') // Pengeluaran for Dana Cash
-                ->sum('nominal');
-
-        // Saldo Prajuru
-        $saldoKasPrajuru = 
-            TransaksiBanjar::query()
-                ->where('kategori_dana_banjar_id', 8) // Deposito LPD category ID
-                ->where('tipe', 'kas-awal') // Pemasukan for Deposito LPD
-                ->sum('nominal') 
-            +
-            TransaksiBanjar::query()
-                ->where('kategori_dana_banjar_id', 8) // Kas Prajuru category ID
-                ->where('tipe', 'pemasukan') // Pemasukan for Kas Prajuru
-                ->sum('nominal')
-            - TransaksiBanjar::query()
-                ->where('kategori_dana_banjar_id', 8) // Kas Prajuru category ID
-                ->where('tipe', 'pengeluaran') // Pengeluaran for Kas Prajuru
-                ->sum('nominal');
-
-        $saldoBanjar = $saldoDanaCashBanjar + $saldoDepositoLPD + $saldoTabunganLPD;
-        $saldoDanaCash = $saldoDanaCashBanjar + $saldoKasPrajuru;
+    //     // $pengeluaranBanjar = TransaksiBanjar::query()
+    //     //     ->where('tipe', 'pengeluaran')
+    //     //     ->sum('nominal');
 
 
-        return [
-            // Existing Stat widgets...
+    //     $saldoDepositoLPD = 
+    //         TransaksiBanjar::query()
+    //             ->where('kategori_dana_banjar_id', 1) // Deposito LPD category ID
+    //             ->where('tipe', 'kas-awal') // Pemasukan for Deposito LPD
+    //             ->sum('nominal') 
+    //         +
+    //         TransaksiBanjar::query()
+    //             ->where('kategori_dana_banjar_id', 1) // Deposito LPD category ID
+    //             ->where('tipe', 'pemasukan') // Pemasukan for Deposito LPD
+    //             ->sum('nominal') 
+    //         - TransaksiBanjar::query()
+    //             ->where('kategori_dana_banjar_id', 1) // Deposito LPD category ID
+    //             ->where('tipe', 'pengeluaran') // Pengeluaran for Deposito LPD
+    //             ->sum('nominal');
 
-            Stat::make('Saldo Kas Banjar', 'Rp ' . number_format($saldoBanjar, 0, ',', '.'))
-                ->description('Saldo total Banjar')
-                ->descriptionIcon(Heroicon::OutlinedScale)
-                ->icon(Heroicon::OutlinedBanknotes)
-                ->color($saldoBanjar >= 0 ? 'primary' : 'danger')
-                ->extraAttributes([
-                    'class' => 'bg-primary-50 dark:bg-primary-950/30 border border-primary-100 dark:border-primary-900 p-2 sm:p-4',
-                ]),
+    //     $saldoTabunganLPD = 
+    //         TransaksiBanjar::query()
+    //             ->where('kategori_dana_banjar_id', 2) // Deposito LPD category ID
+    //             ->where('tipe', 'kas-awal') // Pemasukan for Deposito LPD
+    //             ->sum('nominal') 
+    //         +
+    //         TransaksiBanjar::query()
+    //             ->where('kategori_dana_banjar_id', 2) // Tabungan LPD category ID
+    //             ->where('tipe', 'pemasukan') // Pemasukan for Tabungan LPD
+    //             ->sum('nominal')
+    //         - TransaksiBanjar::query()
+    //             ->where('kategori_dana_banjar_id', 2) // Tabungan LPD category ID
+    //             ->where('tipe', 'pengeluaran') // Pengeluaran for Tabungan LPD
+    //             ->sum('nominal');
+
+    //     $saldoDanaCashBanjar = 
+    //         TransaksiBanjar::query()
+    //             ->where('kategori_dana_banjar_id', 7) // Deposito LPD category ID
+    //             ->where('tipe', 'kas-awal') // Pemasukan for Deposito LPD
+    //             ->sum('nominal') 
+    //         +
+    //         TransaksiBanjar::query()
+    //             ->where('kategori_dana_banjar_id', 7) // Dana Cash category ID
+    //             ->where('tipe', 'pemasukan') // Pemasukan for Dana Cash
+    //             ->sum('nominal')
+    //         - TransaksiBanjar::query()
+    //             ->where('kategori_dana_banjar_id', 7) // Dana Cash category ID
+    //             ->where('tipe', 'pengeluaran') // Pengeluaran for Dana Cash
+    //             ->sum('nominal');
+
+    //     // Saldo Prajuru
+    //     $saldoKasPrajuru = 
+    //         TransaksiBanjar::query()
+    //             ->where('kategori_dana_banjar_id', 8) // Deposito LPD category ID
+    //             ->where('tipe', 'kas-awal') // Pemasukan for Deposito LPD
+    //             ->sum('nominal') 
+    //         +
+    //         TransaksiBanjar::query()
+    //             ->where('kategori_dana_banjar_id', 8) // Kas Prajuru category ID
+    //             ->where('tipe', 'pemasukan') // Pemasukan for Kas Prajuru
+    //             ->sum('nominal')
+    //         - TransaksiBanjar::query()
+    //             ->where('kategori_dana_banjar_id', 8) // Kas Prajuru category ID
+    //             ->where('tipe', 'pengeluaran') // Pengeluaran for Kas Prajuru
+    //             ->sum('nominal');
+
+    //     $saldoBanjar = $saldoDanaCashBanjar + $saldoDepositoLPD + $saldoTabunganLPD;
+    //     $saldoDanaCash = $saldoDanaCashBanjar + $saldoKasPrajuru;
+
+
+    //     return [
+    //         // Existing Stat widgets...
+
+    //         // Stat::make('Saldo Kas Banjar', 'Rp ' . number_format($saldoBanjar, 0, ',', '.'))
+    //         //     ->description('Saldo total Banjar')
+    //         //     ->descriptionIcon(Heroicon::OutlinedScale)
+    //         //     ->icon(Heroicon::OutlinedBanknotes)
+    //         //     ->color($saldoBanjar >= 0 ? 'primary' : 'danger')
+    //         //     ->extraAttributes([
+    //         //         'class' => 'bg-primary-50 dark:bg-primary-950/30 border border-primary-100 dark:border-primary-900 p-2 sm:p-4',
+    //         //     ]),
                 
-            Stat::make('Saldo Kas Prajuru', 'Rp ' . number_format($saldoKasPrajuru, 0, ',', '.'))
-                ->description('Saldo Kas Prajuru')
-                ->descriptionIcon(Heroicon::OutlinedScale)
-                ->icon(Heroicon::OutlinedBanknotes)                
-                ->color($saldoBanjar >= 0 ? 'primary' : 'danger')
-                ->extraAttributes([
-                    'class' => 'bg-danger-50 dark:bg-danger-950/30 border border-danger-100 dark:border-danger-900 p-2 sm:p-4',
-                ]),
+    //         // Stat::make('Saldo Kas Prajuru', 'Rp ' . number_format($saldoKasPrajuru, 0, ',', '.'))
+    //         //     ->description('Saldo Kas Prajuru')
+    //         //     ->descriptionIcon(Heroicon::OutlinedScale)
+    //         //     ->icon(Heroicon::OutlinedBanknotes)                
+    //         //     ->color($saldoBanjar >= 0 ? 'primary' : 'danger')
+    //         //     ->extraAttributes([
+    //         //         'class' => 'bg-danger-50 dark:bg-danger-950/30 border border-danger-100 dark:border-danger-900 p-2 sm:p-4',
+    //         //     ]),
 
             
-        ];
-    }
+    //     ];
+    // }
 }

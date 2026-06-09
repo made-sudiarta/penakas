@@ -46,4 +46,13 @@ class EditTransaksiBanjar extends EditRecord
     {
         return $this->getResource()::getUrl('index');
     }
+
+    protected function authorizeAccess(): void
+    {
+        parent::authorizeAccess();
+
+        if ($this->record->periode?->is_closed) {
+            abort(403, 'Periode sudah ditutup.');
+        }
+    }
 }

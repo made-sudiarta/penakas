@@ -12,6 +12,8 @@ class TransaksiBanjar extends Model
 
     protected $fillable = [
         'kategori_dana_banjar_id',
+        'periode_banjar_id',
+        'akun_keuangan_banjar_id',
         'tanggal',
         'tipe',
         'judul',
@@ -33,5 +35,20 @@ class TransaksiBanjar extends Model
     public function pembuat(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+    public function periode(): BelongsTo
+    {
+        return $this->belongsTo(
+            PeriodeBanjar::class,
+            'periode_banjar_id',
+            'id'
+        );
+    }
+    public function akun(): BelongsTo
+    {
+        return $this->belongsTo(
+            AkunKeuanganBanjar::class,
+            'akun_keuangan_banjar_id'
+        );
     }
 }

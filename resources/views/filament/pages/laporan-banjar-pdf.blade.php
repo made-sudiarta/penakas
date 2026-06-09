@@ -215,10 +215,13 @@
         <h3>{{ $judulLaporan }}</h3>
 
         <div class="periode">
-            Periode :
-            {{ $start_date ? \Carbon\Carbon::parse($start_date)->translatedFormat('d F Y') : '-' }}
+            <strong>{{ $periode?->nama ?? '-' }}</strong>
+
+            <br>
+
+            {{ $periode?->tanggal_mulai?->translatedFormat('d F Y') ?? '-' }}
             s/d
-            {{ $end_date ? \Carbon\Carbon::parse($end_date)->translatedFormat('d F Y') : '-' }}
+            {{ $periode?->tanggal_selesai?->translatedFormat('d F Y') ?? '-' }}
         </div>
     </div>
 
@@ -280,6 +283,12 @@
     </table>
 
     <!-- SUMMARY -->
+
+    <div style="margin-top:20px; margin-bottom:10px;">
+        <strong>Jenis Laporan:</strong>
+        {{ $judulLaporan }}
+    </div>
+
     <table class="summary">
         <tr>
             <th>Saldo Awal</th>
@@ -328,8 +337,8 @@
                 </td>
 
                 <td width="50%">
-                    Denpasar,
-                    {{ $end_date ? \Carbon\Carbon::parse($end_date)->translatedFormat('d F Y') : '-' }}
+                    Denpasar, 
+                    {{ now()->translatedFormat('d F Y') }}
                     <br>
 
                     <span class="jabatan">

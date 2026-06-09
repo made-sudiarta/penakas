@@ -11,6 +11,9 @@ use Filament\Forms\Components\Textarea;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Auth;
+use App\Models\PeriodeBanjar;
+
+use Filament\Notifications\Notification;
 
 class TransaksiBanjarForm
 {
@@ -27,6 +30,19 @@ class TransaksiBanjarForm
                                 name: 'kategoriDanaBanjar',
                                 titleAttribute: 'nama',
                                 modifyQueryUsing: fn ($query) => $query->where('is_active', true),
+                            )
+                            ->searchable()
+                            ->preload()
+                            ->required(),
+                        
+                        Select::make('akun_keuangan_banjar_id')
+                            ->label('Kode Akun')
+                            ->relationship(
+                                name: 'akun',
+                                titleAttribute: 'nama'
+                            )
+                            ->getOptionLabelFromRecordUsing(
+                                fn ($record) => "{$record->kode} - {$record->nama}"
                             )
                             ->searchable()
                             ->preload()
@@ -68,6 +84,12 @@ class TransaksiBanjarForm
 
                         Hidden::make('created_by')
                             ->default(fn () => Auth::id()),
+                            
+                        // Select::make('periode_banjar_id')
+                        //     ->relationship('periode', 'nama')
+                        //     ->label('Periode')
+                        //     ->disabled()
+                        //     ->dehydrated(),
 
                         FileUpload::make('foto_nota')
                             ->label('Foto Nota / Kuitansi')
